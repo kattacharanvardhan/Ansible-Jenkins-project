@@ -1,0 +1,45 @@
+pipeline{
+    agent any
+    stages{
+        stage('Checkout'){
+            steps{
+                git 'https://github.com/kattacharanvardhan/java-project-maven-new.git'
+            }
+        }
+        stage('Build'){
+            steps{
+                sh 'mvn compile'
+            }
+        }
+        stage('Test'){
+            steps{
+                sh 'mvn test'
+            }
+        }
+        stage('Package'){
+            steps{
+                sh 'mvn package'
+            }
+        }
+        stage('artifact-s3'){
+            steps{
+                s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'artifacts-store-war-file/', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'ap-south-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: true]], pluginFailureResultConstraint: 'FAILURE', profileName: 's3creds', userMetadata: []
+            }
+        }
+        stage('Nexus'){
+            steps{
+                nexusArtifactUploader artifacts: [[artifactId: 'myapp', classifier: '', file: 'target/myapp.war', type: 'war']], credentialsId: 'nexuscreds', groupId: 'in.reyaz', nexusUrl: '15.206.117.31:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'hotstar', version: '8.3.3-SNAPSHOT'
+            }
+        }
+        stage('Ansible-slave-deploy'){
+            steps{
+                ansiblePlaybook credentialsId: 'linuxcreds', disableHostKeyChecking: true, installation: 'ansible', inventory: '/etc/ansible/hosts', playbook: '/etc/ansible/deploy.yml', vaultTmpPath: ''
+            }
+        }
+        stage('Tomcat-Deploy'){
+            steps{
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcatcreds', path: '', url: 'http://65.2.34.186:8080/')], contextPath: 'hotstar', war: 'target/myapp.war'
+            }
+        }
+    }
+}
