@@ -231,18 +231,6 @@ No manual deployment is required.
 
 ---
 
-# 📸 Screenshots
-
-- Jenkins Pipeline
-- SonarQube Dashboard
-- Nexus Repository
-- AWS S3 Bucket
-- Apache Tomcat
-- Application Running
-- CI/CD Architecture Diagram
-
----
-
 # 👨‍💻 Author
 
 **Charan Vardhan**
