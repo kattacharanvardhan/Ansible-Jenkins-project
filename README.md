@@ -139,31 +139,6 @@ No manual deployment is required.
 
 ---
 
-# 📂 Project Structure
-
-```
-CI-CD-Pipeline/
-│
-├── Jenkinsfile
-├── README.md
-│
-├── ansible/
-│   ├── inventory
-│   ├── install_tomcat.yml
-│   ├── deploy_war.yml
-│
-├── images/
-│   └── cicd-pipeline.png
-│
-├── src/
-├── pom.xml
-│
-└── target/
-    └── *.war
-```
-
----
-
 # 🛠️ Technologies Used
 
 | Category | Technology |
