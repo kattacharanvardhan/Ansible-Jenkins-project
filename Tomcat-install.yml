@@ -1,0 +1,34 @@
+---
+- name: Install and Configure Tomcat
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Java
+      yum:
+        name: java-21-amazon-corretto
+        state: present
+
+    - name: Download Tomcat
+      get_url:
+        url: "https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.23/bin/apache-tomcat-11.0.23.tar.gz"
+        dest: /opt/apache-tomcat-11.0.23.tar.gz
+
+    - name: Extract Tomcat
+      command: tar -zxvf /opt/apache-tomcat-11.0.23.tar.gz -C /opt
+
+    - name: Rename Tomcat Folder
+      command: mv /opt/apache-tomcat-11.0.23 /opt/tomcat
+
+    - name: Copy tomcat-users.xml
+      template:
+        src: /root/tomcat-users.xml
+        dest: /opt/tomcat/conf/tomcat-users.xml
+
+    - name: Copy context.xml
+      template:
+        src: /root/context.xml
+        dest: /opt/tomcat/webapps/manager/META-INF/context.xml
+
+    - name: Start Tomcat
+      shell: /opt/tomcat/bin/startup.sh
+...
